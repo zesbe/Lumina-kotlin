@@ -46,10 +46,7 @@ data class Generation(
         get() = artist ?: "Lumina AI"
     
     val cleanedLyrics: String
-        get() = lyrics?.replace(Regex("[â][^\\s\\n]{1,3}"), "")
-            ?.replace("â€™", "'")
-            ?.replace("â€"", "-")
-            ?.trim() ?: ""
+        get() = lyrics?.trim() ?: ""
     
     val isFromExplore: Boolean
         get() = creatorName != null && creatorName.isNotEmpty()
