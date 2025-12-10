@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GRADLE_HOME: ${{ github.workspace }}/gradle-8.4
     
     steps:
       - name: Checkout code
@@ -21,21 +23,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle Wrapper
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: wrapper
-
-      - name: Create Gradle Wrapper
+      - name: Download Gradle 8.4
         run: |
-          gradle wrapper --gradle-version 8.4
-          chmod +x gradlew
+          curl -sL https://services.gradle.org/distributions/gradle-8.4-bin.zip -o gradle.zip
+          unzip -q gradle.zip
+          rm gradle.zip
+          chmod +x gradle-8.4/bin/gradle
+
+      - name: Verify Gradle Version
+        run: $GRADLE_HOME/bin/gradle --version
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: $GRADLE_HOME/bin/gradle assembleDebug --no-daemon
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon
+        run: $GRADLE_HOME/bin/gradle assembleRelease --no-daemon
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
